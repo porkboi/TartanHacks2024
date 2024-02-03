@@ -3,14 +3,12 @@
     {
       "email": "bowenjia@andrew.cmu.edu",
       "password": "$2b$10$d4GHjhzwXKjpCQRoxlskIukAdX9XHMJ2InTU0udC7Rbgb06YrVZoK",
-      "DOT": "69",
-      "otp": "78993"
+      "DOT": "69"
     },
     {
       "email": "christianang86@gmail.com",
       "password": "$2b$10$bWIYKZmW2AF6tz112q6xVeX7ACJQIq9EgWj1hubB9GlLJO/CdNO/i",
-      "DOT": "45",
-      "otp": "56"
+      "DOT": "45"
     }
   ]
 }

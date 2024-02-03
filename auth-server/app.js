@@ -6,6 +6,8 @@ var low = require("lowdb");
 var FileSync = require("lowdb/adapters/FileSync");
 var adapter = new FileSync("./database.json");
 var db = low(adapter);
+const fs = require('fs');
+const speakeasy = require('speakeasy');
 
 // Initialize Express app
 const app = express()
@@ -25,8 +27,8 @@ app.get("/", (_req, res) => {
 
 // The auth endpoint that creates a new user record or logs a user based on an existing record
 app.post("/auth", (req, res) => {
-    
-    const { email, password , otp} = req.body;
+    console.log(req.body)
+    const { email, password} = req.body;
 
     // Look up the user entry in the database
     const user = db.get("users").value().filter(user => email === user.email)
@@ -42,15 +44,19 @@ app.post("/auth", (req, res) => {
                     signInTime: Date.now(),
                 };
 
+                const seed = speakeasy.generateSecret().ascii;
+                user[0].seed = seed;
+
                 const token = jwt.sign(loginData, jwtSecretKey);
-                res.status(200).json({ message: "success", otp: user[0].otp, token });
+                res.status(200).json({ message: "success", seed: user[0].seed, token });
             }
         });
     // If no user is found, hash the given password and create a new entry in the auth db with the email and hashed password
     } else if (user.length === 0) {
         bcrypt.hash(password, 10, function (_err, hash) {
-            console.log({ email, password: hash, otp: otp })
-            db.get("users").push({ email, password: hash }).write()
+            const seed = speakeasy.generateSecret().ascii;
+            console.log({ email, password: hash})
+            db.get("users").push({ email, password: hash, seed: seed}).write()
 
             let loginData = {
                 email,

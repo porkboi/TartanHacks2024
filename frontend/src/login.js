@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const Login = (props) => {
     const [email, setEmail] = useState("")
-    const [otp, setOtp] = useState("")
+    const [seed, setSeed] = useState("")
     const [password, setPassword] = useState("")
     const [emailError, setEmailError] = useState("")
     const [passwordError, setPasswordError] = useState("")
@@ -81,10 +81,10 @@ const Login = (props) => {
         .then(r => {
             console.log(r)
             if ('success' === r.message) {
-                localStorage.setItem("user", JSON.stringify({email, token: r.token, otp : r.otp}))
+                localStorage.setItem("user", JSON.stringify({email, token: r.token, seed : r.seed}))
                 props.setLoggedIn(true)
                 props.setEmail(email)
-                props.setOtp(r.otp)
+                props.setSeed(r.seed)
                 navigate("/")
             } else {
                 window.alert("Wrong email or password")
