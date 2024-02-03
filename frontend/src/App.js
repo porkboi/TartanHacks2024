@@ -9,6 +9,7 @@ function App() {
   const [email, setEmail] = useState("")
   const [seed, setSeed] = useState("")
   const [code, setCode] = useState("")
+  const [accountType, setAccountType] = useState("")
 
   useEffect(() => {
     // Fetch the user email and token from local storage
@@ -39,8 +40,8 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} seed={seed} setSeed={setSeed} code={code} setCode={setCode} />} />
-          <Route path="/login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} setSeed={setSeed} setCode={setCode}/>} />
+          <Route path="/" element={<Home email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} seed={seed} setSeed={setSeed} code={code} setCode={setCode} accountType={accountType} setAccountType={setAccountType}/>} />
+          <Route path="/login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} setSeed={setSeed} setCode={setCode} accountType={accountType} setAccountType={setAccountType}/>} />
         </Routes>
       </BrowserRouter>
     </div>

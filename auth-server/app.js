@@ -25,10 +25,17 @@ app.get("/", (_req, res) => {
     res.send("Auth API.\nPlease use POST /auth & POST /verify for authentication")
 })
 
+app.post("/getUsers", (req, res) => {
+    const { email } = req.body;
+    const users = db.get("users").value().filter(user => email === user.ownerEmail)
+    console.log(users)
+    res.status(200).json({users})
+})
+
 // The auth endpoint that creates a new user record or logs a user based on an existing record
 app.post("/auth", (req, res) => {
     console.log(req.body)
-    const { email, password} = req.body;
+    const { email, password, isAdmin, ownerEmail } = req.body;
 
     // Look up the user entry in the database
     const user = db.get("users").value().filter(user => email === user.email)
@@ -48,7 +55,8 @@ app.post("/auth", (req, res) => {
                 user[0].seed = seed;
 
                 const token = jwt.sign(loginData, jwtSecretKey);
-                res.status(200).json({ message: "success", seed: user[0].seed, token });
+
+                res.status(200).json({ message: "success", seed: user[0].seed, token, accountType: user[0].accountType});
             }
         });
     // If no user is found, hash the given password and create a new entry in the auth db with the email and hashed password
@@ -56,7 +64,8 @@ app.post("/auth", (req, res) => {
         bcrypt.hash(password, 10, function (_err, hash) {
             const seed = speakeasy.generateSecret().ascii;
             console.log({ email, password: hash})
-            db.get("users").push({ email, password: hash, seed: seed}).write()
+            const accountType = isAdmin ? "admin" : "user"
+            db.get("users").push({ email, password: hash, seed: seed, accountType, ownerEmail }).write()
 
             let loginData = {
                 email,

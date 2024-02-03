@@ -3,9 +3,33 @@ import { useNavigate } from "react-router-dom";
 import speakeasy from 'speakeasy';
 
 const Home = (props) => {
-    const { loggedIn, email, seed, setSeed, code, setCode } = props
-    const [refreshTime, setRefreshTime] = useState(30)
+    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
+    const [users, setUsers] = useState([]);
+
+    const handleEmailChange = (event) => {
+        setEmail(event.target.value);
+    };
+
+    const handlePasswordChange = (event) => {
+        setPassword(event.target.value);
+    };
+
+    const handleFormSubmit = (event) => {
+        event.preventDefault();
+        const isAdmin = false
+        fetch("http://localhost:3080/auth", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            body: JSON.stringify({email, password, isAdmin, ownerEmail: props.email})
+        })
+    };
+    const { loggedIn, seed, setSeed, code, setCode } = props
+    const [refreshTime, setRefreshTime] = useState(0)
     const navigate = useNavigate()
+    const userData = JSON.parse(localStorage.getItem("user"))
 
     const userSeed = seed; // Replace with the actual user's seed
 
@@ -17,29 +41,30 @@ const Home = (props) => {
             });
             setCode(res)
             setRefreshTime(30)
-        } 
+        }
+
+
         const interval = setInterval(() => {
             setRefreshTime(refreshTime - 1)
         }, 1000)
-        return () => clearInterval(interval)}, [refreshTime])
-    //     const updateTOTPCode = () => {
-    //     const code = speakeasy.totp({
-    //         secret: userSeed,
-    //         encoding: 'base32',
-    //     });
-    //     setCode(code);
-    //     };
+        return () => clearInterval(interval)
+    }, [refreshTime])
 
-    //     // Initial TOTP code
-    //     updateTOTPCode();
+    useEffect(() => {
+        fetch('http://localhost:3080/getUsers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: props.email }), // replace 'ownerEmail' with the actual owner's email
+        })
+        .then(response => response.json())
+        .then(data => setUsers(data.users))
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
 
-    //     // Set up a timer to update the TOTP code every 30 seconds (adjust as needed)
-    //     const intervalId = setInterval(updateTOTPCode, 30000);
-
-    //     return () => {
-    //     clearInterval(intervalId); // Cleanup timer
-    //     };
-    
     const onButtonClick = () => {
         if (loggedIn) {
             localStorage.removeItem("user")
@@ -49,11 +74,6 @@ const Home = (props) => {
         }
     }
 
-    const onButtonClick2 = () => {
-        if (loggedIn) {
-            setSeed(JSON.parse(localStorage.getItem("user")).seed)
-        }
-    }
 
     return <div className="mainContainer">
         <div className={"titleContainer"}>
@@ -62,16 +82,41 @@ const Home = (props) => {
         <div>
             This is the PLS Authentication Service.
         </div>
-        <div className={"buttonContainer"}>
-            <input
-                className={"inputButton"}
-                type="button"
-                onClick={onButtonClick2}
-                value={"Check for Token"} />
-            {<div>
-                Your OTP is {code}
-            </div>}
-        </div>
+        {(loggedIn ? <div>
+            Your OTP is {code}
+        </div> : <div />)}
+
+
+        {props.accountType === "admin" && (
+    <div className={"adminContainer"} style={{ textAlign: 'center' }}>
+        <table style={{ marginBottom: '20px' }}>
+            <thead>
+                <tr>
+                    <th>Your Users</th>
+                </tr>
+            </thead>
+            <tbody>
+                {users.map((user, index) => (
+                    <tr key={index}>
+                        <td>{user.email}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+
+        <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <label style={{ marginBottom: '10px' }}>
+                Email:
+                <input type="email" name="email" onChange={handleEmailChange} />
+            </label>
+            <label style={{ marginBottom: '20px' }}>
+                Password:
+                <input type="password" name="password" onChange={handlePasswordChange} />
+            </label>
+            <input type="submit" value="Create Account" />
+        </form>
+    </div>
+)}
 
         <div className={"buttonContainer"}>
             <input
@@ -80,9 +125,10 @@ const Home = (props) => {
                 onClick={onButtonClick}
                 value={loggedIn ? "Log out" : "Log in"} />
             {(loggedIn ? <div>
-                Your email address is {email}
-            </div> : <div/>)}
+                Your email address is {props.email}
+            </div> : <div />)}
         </div>
+
 
 
     </div>

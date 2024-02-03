@@ -3,12 +3,28 @@
     {
       "email": "bowenjia@andrew.cmu.edu",
       "password": "$2b$10$d4GHjhzwXKjpCQRoxlskIukAdX9XHMJ2InTU0udC7Rbgb06YrVZoK",
-      "DOT": "69"
+      "accountType": "admin",
+      "seed": "EMZ^alKSWMXN}<dLDPGF#V7JmR07w>d8"
     },
     {
       "email": "christianang86@gmail.com",
       "password": "$2b$10$bWIYKZmW2AF6tz112q6xVeX7ACJQIq9EgWj1hubB9GlLJO/CdNO/i",
-      "DOT": "45"
+      "accountType": "user",
+      "seed": "UZloS(HOZSG47q9,^mvx]&r}LpP^LGb5"
+    },
+    {
+      "email": "pireyl@andrew.cmu.edu",
+      "password": "$2b$10$690xeTQmU9AZq.5U7QZ72ueg8IvcMsJQ8zDAd8BFNZWk/lrAfJevS",
+      "seed": "Ed}%<2Qrkx>>(rp1BnI4&0UKSzOk4),f",
+      "accountType": "user",
+      "ownerEmail": "bowenjia@andrew.cmu.edu"
+    },
+    {
+      "email": "jniow@andrew.cmu.edu",
+      "password": "$2b$10$pJ7GEtyVuepfDpaWkOR53ubWMWtO7H.YHJXXu4oC.qrQJQ6hCPIM6",
+      "seed": "La5akl4z7>GT7pq6#g#Zc0Qe*8brC34g",
+      "accountType": "user",
+      "ownerEmail": "bowenjia@andrew.cmu.edu"
     }
   ]
 }

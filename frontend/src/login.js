@@ -33,7 +33,7 @@ const Login = (props) => {
             return
         }
 
-        if (password.length < 7) {
+        if (password.length < 2) {
             setPasswordError("The password must be 8 characters or longer")
             return
         }
@@ -70,26 +70,33 @@ const Login = (props) => {
 
     // Log in a user using email and password
     const logIn = () => {
+        const isAdmin = true
         fetch("http://localhost:3080/auth", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
               },
-            body: JSON.stringify({email, password})
+            body: JSON.stringify({email, password, isAdmin, ownerEmail: ""})
         })
         .then(r => r.json())
         .then(r => {
             console.log(r)
             if ('success' === r.message) {
-                localStorage.setItem("user", JSON.stringify({email, token: r.token, seed : r.seed}))
+                localStorage.setItem("user", JSON.stringify({email, token: r.token, seed : r.seed, accountType: r.accountType}))
                 props.setLoggedIn(true)
                 props.setEmail(email)
                 props.setSeed(r.seed)
+                console.log(r.accountType)
+                props.setAccountType(r.accountType)
                 navigate("/")
             } else {
                 window.alert("Wrong email or password")
             }
         })
+    }
+
+    const adminAdd = (ownerEmail) => {
+        
     }
 
     return <div className={"mainContainer"}>
