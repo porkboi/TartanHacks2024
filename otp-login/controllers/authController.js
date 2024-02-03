@@ -1,6 +1,7 @@
 // controllers/authController.js
 const bcrypt = require('bcrypt');
 const User = require('../models/userModel');
+const jwt = require('jsonwebtoken')
 const OTP = require('../models/otpModel');
 
 exports.signup = async (req, res) => {
@@ -67,14 +68,15 @@ exports.login = async (req, res) => {
         return res.status(401).json({ error: 'Invalid email or password' });
       }
       // Validate the password
-      const isPasswordValid = await user.comparePassword(password);
+      const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         return res.status(401).json({ error: 'Invalid email or password' });
       }
       // Generate a JWT token
       const token = jwt.sign({ userId: user._id }, 'secretKey');
-      
+      console.log('User logged in successfully');
       res.status(200).json({ token });
+      
     } catch (error) {
       console.error('Error logging in:', error);
       res.status(500).json({ error: 'An error occurred while logging in' });
