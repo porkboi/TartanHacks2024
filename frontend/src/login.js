@@ -12,6 +12,8 @@ const Login = (props) => {
     const navigate = useNavigate();
         
     const onButtonClick = () => {
+        // console.log("email", email)
+        // console.log("password", password)
 
         // Set initial error values to empty
         setEmailError("")
@@ -33,22 +35,32 @@ const Login = (props) => {
             return
         }
 
-        if (password.length < 7) {
-            setPasswordError("The password must be 8 characters or longer")
+        if ("" === otp) {
+            sendotp()
             return
         }
+        else{
+            logIn()
+        }
+
+        // if (password.length < 7) {
+        //     setPasswordError("The password must be 8 characters or longer")
+        //     return
+        // }
 
         // Check if email has an account associated with it
-        checkAccountExists(accountExists => {
-            // If yes, log in 
-            if (accountExists)
-                logIn()
-            else
-            // Else, ask user if they want to create a new account and if yes, then log in
-                if (window.confirm("An account does not exist with this email address: " + email + ". Do you want to create a new account?")) {
-                    logIn()
-                }
-        })        
+        // checkAccountExists(accountExists => {
+        //     // If yes, log in 
+        //     if (accountExists)
+        //         logIn()
+        //     else
+        //     // Else, ask user if they want to create a new account and if yes, then log in
+        //         if (window.confirm("An account does not exist with this email address: " + email + ". Do you want to create a new account?")) {
+        //             logIn()
+        //         }
+        // })
+        
+
   
 
     }
@@ -68,20 +80,52 @@ const Login = (props) => {
         })
     }
 
+    //Sends an OTP to the user's email
+    const sendotp = () => {
+        console.log(typeof email)
+        //send an otp to the user
+        console.log(JSON.stringify(email))
+        fetch("http://localhost:3080/api/v1/sendotp", {
+            headers: {
+                "Content-Type": "application/json"
+            },
+            method: "POST",
+            body: JSON.stringify({"email":email})
+        })
+        .then(response => {
+            // Check if the request was successful
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json(); // Parse JSON response
+          })
+          .then(data => {
+            // Handle the response data
+            console.log(data);
+          })
+          .catch(error => {
+            // Handle any errors
+            console.error('There was a problem with your fetch operation:', error);
+          })
+        .then(window.alert("OTP sent to your email. Please key in to the OTP field."));
+    }
+
     // Log in a user using email and password
     const logIn = () => {
-        fetch("http://localhost:3080/auth", {
+        console.log("with otp")
+        fetch("http://localhost:3080/api/v1/login", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
               },
-            body: JSON.stringify({email, password})
+            body: JSON.stringify({email, password, otp})
         })
         .then(r => r.json())
         .then(r => {
             console.log(r)
-            if ('success' === r.message) {
-                localStorage.setItem("user", JSON.stringify({email, token: r.token, otp : r.otp}))
+            if (r.token) {
+                console.log("success")
+                //localStorage.setItem("user", JSON.stringify({email, token: r.token, otp : r.otp}))
                 props.setLoggedIn(true)
                 props.setEmail(email)
                 props.setOtp(r.otp)
@@ -116,6 +160,14 @@ const Login = (props) => {
             <label className="errorLabel">{passwordError}</label>
         </div>
         <br />
+        <div className={"inputContainer"}>
+            <input
+                type ="otp"
+                value={otp}
+                placeholder="Enter your OTP here"
+                onChange={ev => setOtp(ev.target.value)}
+                className={"inputBox"} />
+        </div>
         <div className={"inputContainer"}>
             <input
                 className={"inputButton"}

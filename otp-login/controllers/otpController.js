@@ -4,8 +4,13 @@ const OTP = require('../models/otpModel');
 const User = require('../models/userModel');
 
 exports.sendOTP = async (req, res) => {
+  console.log("hi");
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  //res.header = "Access-Control-Allow-Origin: http://localhost:3001";
   try {
+    console.log("before checking");
     const { email } = req.body;
+    console.log("this is the email", email);
     // Check if user is already present
     const checkUserPresent = await User.findOne({ email });
     // If user found with provided email
