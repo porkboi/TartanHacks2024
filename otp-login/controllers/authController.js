@@ -61,7 +61,7 @@ exports.signup = async (req, res) => {
 // User login
 exports.login = async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { email, password, otp } = req.body;
       // Check if the user exists
       const user = await User.findOne({ email });
       if (!user) {
@@ -71,6 +71,16 @@ exports.login = async (req, res) => {
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         return res.status(401).json({ error: 'Invalid email or password' });
+      }
+
+      // Find the most recent OTP for the email
+      const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
+      console.log('otp:', response[0]);
+      if (response.length === 0 || otp !== response[0].otp) {
+        return res.status(400).json({
+          success: false,
+          message: 'The OTP is not valid',
+        });
       }
       // Generate a JWT token
       const token = jwt.sign({ userId: user._id }, 'secretKey');
