@@ -6,7 +6,8 @@ import { useEffect, useState } from 'react';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false)
-  const [email, setEmail, otp, setOTP] = useState("")
+  const [email, setEmail] = useState("")
+  const [otp, setOtp] = useState("")
 
   useEffect(() => {
     // Fetch the user email and token from local storage
@@ -29,7 +30,7 @@ function App() {
         .then(r => {
             setLoggedIn('success' === r.message)
             setEmail(user.email || "")
-            setOTP(user.otp || "")
+            setOtp(user.otp || "")
         })
   }, [])
 
@@ -37,8 +38,8 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} otp={otp} setOTP={setOTP}/>} />
-          <Route path="/login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+          <Route path="/" element={<Home email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} otp={otp} setOtp={setOtp}/>} />
+          <Route path="/login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} setOtp={setOtp}/>} />
         </Routes>
       </BrowserRouter>
     </div>

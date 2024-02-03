@@ -2,7 +2,7 @@ import React from "react"
 import { useNavigate } from "react-router-dom";
 
 const Home = (props) => {
-    const { loggedIn, email , otp} = props
+    const { loggedIn, email, otp, setOtp } = props
     console.log(otp)
     const navigate = useNavigate()
     
@@ -16,8 +16,8 @@ const Home = (props) => {
     }
 
     const onButtonClick2 = () => {
-        if (otp) {
-            props.setOTP(true)
+        if (loggedIn) {
+            props.setOtp(JSON.parse(localStorage.getItem("user")).otp)
         }
     }
 

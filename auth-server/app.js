@@ -30,7 +30,6 @@ app.post("/auth", (req, res) => {
 
     // Look up the user entry in the database
     const user = db.get("users").value().filter(user => email === user.email)
-    const user2 = db.get("users").value().filter(user => otp === user.otp)
 
     // If found, compare the hashed passwords and generate the JWT token for the user
     if (user.length === 1) {
@@ -44,7 +43,7 @@ app.post("/auth", (req, res) => {
                 };
 
                 const token = jwt.sign(loginData, jwtSecretKey);
-                res.status(200).json({ message: "success", token });
+                res.status(200).json({ message: "success", otp: user[0].otp, token });
             }
         });
     // If no user is found, hash the given password and create a new entry in the auth db with the email and hashed password
