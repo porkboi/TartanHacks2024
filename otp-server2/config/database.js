@@ -3,7 +3,7 @@ const  mongoose = require('mongoose')
 require('dotenv').config()
 
 exports.connect = () => {
-    mongoose.connect('mongodb+srv://jniow:WmJhkHXzS8nWg8NI@tartanhacks.gggzo9b.mongodb.net/?retryWrites=true&w=majority', {
+    mongoose.connect('mongodb+srv://jniow:<>@tartanhacks.gggzo9b.mongodb.net/?retryWrites=true&w=majority', {
             useNewUrlParser: true,
             useUnifiedTopology : true
     }).then(()=>console.log("DB Connected Successfully✅"))
